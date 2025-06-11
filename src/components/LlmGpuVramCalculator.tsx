@@ -10,45 +10,51 @@ import { modelDefs } from '../data/modelDefs.ts'; // Import model definitions
 
 function computeModelVramGB(model: ModelDef, quant: 'fp16' | 'fp8' | 'int8' | 'int4'): number {
   // If using the model's native quantization type
+  console.log(`Computing VRAM for model: ${model.name}, ${model.quantType}, quant: ${quant}`);
   if (quant === model.quantType) {
     return model.modelSizeGB;
   }
-
-  // For other quantization types
-  const bytesPerParam = quant === 'fp16' ? 2
-    : quant === 'fp8' ? 1
-    : quant === 'int8' ? 1
-    : 0.5; // int4
-
-  return model.totalParamsB * 1e9 * bytesPerParam / (1024 ** 3);
+  else {
+    // For other quantization types
+    const bytesPerParam = quant === 'fp16' ? 2
+      : quant === 'fp8' ? 1
+      : quant === 'int8' ? 1
+      : 0.5; // int4
+    const quantFactor = quant === 'fp8' ? (0.5 + 3/32)/0.5 // worst case quantization factor for int4, fp8, fp16
+      : quant === 'int4' ? (0.5 + 3/32)/0.5
+      : quant === 'fp16' ? 1
+      : 1; // fp32
+    return model.totalParamsB * bytesPerParam * quantFactor
+  }
 }
 
-function computeKvCacheVramGB(hiddenSize: number, maxLength: number, quant: 'fp16' | 'fp8' | 'int8' | 'int4', model: ModelDef, card: GPUCard): number {
+function computeKvCacheVramGB(_hiddenSize: number, maxLength: number, quant: 'fp16' | 'fp8' | 'int8' | 'int4', model: ModelDef, _card: GPUCard): number {
   const bytesPerValue = quant === 'fp16' ? 2
     : quant === 'fp8' ? 1
     : quant === 'int8' ? 1
-    : 0.5;
+    : quant === 'int4' ? 0.5
+    : 4; // fp32
 
   // Check if GPU supports FP8 for KV cache (Ampere and newer architectures)
-  const supportsFp8KV = card.processPower.fp8 !== undefined;
-  
+  // const supportsFp8KV = card.kvQuantType === 'fp8';
+  const baseKVSize = model.perKVsizeFp8; // This is the FP8 size per token
+
   // If GPU doesn't support FP8 KV cache, use precalculated FP8 value * 2 for FP16
-  if (!supportsFp8KV && model.perKVsizeFp8) {
-    const baseKVSize = model.perKVsizeFp8; // This is the FP8 size per token
-    const sizeMultiplier = quant === 'fp16' ? 2 : 
-                          quant === 'int8' ? 1 : 
-                          quant === 'int4' ? 0.5 : 1;
-    // Calculate total KV cache size in GB
-    // Notes: both k and v are stored, so we multiply by 2
-    // Also, maxLength is the number of tokens
-    // and baseKVSize is in bytes per token
-    // Finally, we convert bytes to gigabytes
-    return (baseKVSize * sizeMultiplier * maxLength * 2) / (1024 * 1024 * 1024);
-  }
+  // if (!supportsFp8KV && model.perKVsizeFp8) {
+  //   const sizeMultiplier = quant === 'fp16' ? 2 : 
+  //                         quant === 'fp8' ? 1 :
+  //                         quant === 'int8' ? 1 : 
+  //                         quant === 'int4' ? 0.5 : 1;
+  //   // Calculate total KV cache size in GB
+  //   // Notes: both k and v are stored, so we multiply by 2
+  //   // Also, maxLength is the number of tokens
+  //   // and baseKVSize is in bytes per token
+  //   // Finally, we convert bytes to gigabytes
+  //   return (baseKVSize * sizeMultiplier * maxLength * 2) / (1024 * 1024 * 1024);
+  // }
 
   // For GPUs that support FP8 or when using other quantization
-  const totalBytes = 2 * hiddenSize * bytesPerValue * maxLength;
-  return totalBytes / (1024 ** 3);  // in gigabytes
+  return (baseKVSize * bytesPerValue * maxLength * 2) / (1024 * 1024 * 1024);
 }
 
 export default function LLMVRAMCalculator() {
@@ -59,8 +65,8 @@ export default function LLMVRAMCalculator() {
   // kv cache quantization type, default to fp8
   // as it is the most common for KV cache on production environments
   const [kvQuantType, _setKvQuantType] = useState<'fp16' | 'fp8' | 'int8' | 'int4'>('fp8');
-  const [maxLength, setMaxLength] = useState<number>(1024);
-  const [userCount, setUserCount] = useState<number>(20);
+  const [maxLength, setMaxLength] = useState<number>(8192);
+  const [userCount, setUserCount] = useState<number>(10);
 
   // outputs
   const [results, setResults] = useState<CalcResults | null>(null);
@@ -133,7 +139,8 @@ export default function LLMVRAMCalculator() {
       const baseGenSpeed = (selectedCard.memoryBandwidthGBs / selectedModel.activeParamsB) * genQuant;
       const genSpeed = baseGenSpeed * membwScaling;
 
-      const ppow = selectedCard.processPower[quantType] ?? selectedCard.processPower.fp16 ?? 0;
+      // noe vLLM backend only use fp16 for process power
+      const ppow = selectedCard.processPower.fp16 ?? selectedCard.processPower.fp32 ?? 0;
       const basePromptSpeed = (ppow * 1000 / selectedModel.totalParamsB) / Math.sqrt(2);
       const promptSpeed = basePromptSpeed * ppScaling;
 
@@ -204,8 +211,12 @@ export default function LLMVRAMCalculator() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           {/* Model, Quant, Max Len, Users... */}
           <div className="form-control">
-            <label className="label"><span className="label-text">Model</span></label>
+            <label className="label flex justify-between items-center">
+              <span className="label-text">Model</span>
+            </label>
             <select
+              // defaultValue=
+              value={selectedModel?.name || ""}
               onChange={e => setSelectedModel(modelDefs.find(m => m.name === e.target.value) || null)}
               className="select select-bordered w-full"
             >
@@ -215,7 +226,9 @@ export default function LLMVRAMCalculator() {
           </div>
 
           <div className="form-control">
-            <label className="label"><span className="label-text">Quantization</span></label>
+            <label className="label flex justify-between items-center">
+              <span className="label-text">Model Quantization</span>
+            </label>
             <select
               value={quantType}
               onChange={e => setQuantType(e.target.value as any)}
@@ -228,15 +241,30 @@ export default function LLMVRAMCalculator() {
           </div>
 
           <div className="form-control">
-            <label className="label"><span className="label-text">GPU Card</span></label>
+            <label className="label flex justify-between items-center">
+              <span className="label-text">GPU Card</span>
+              <span
+                className="tooltip tooltip-bottom"
+                data-tip="Card marked with * are theoretical estimates and may not even properly execute."
+                >
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer"/>
+              </span>
+            </label>
             <div className="grid items-center gap-2">
-              <select
-                onChange={e => setSelectedCard(gpuCards.find(c => c.name === e.target.value) || null)}
+                <select
+                onChange={e => {
+                  const card = gpuCards.find(c => c.name === e.target.value) || null;
+                  setSelectedCard(card);
+                  if (card) {
+                  // Auto set KV cache quantization based on card capabilities
+                  _setKvQuantType(card.kvQuantType as 'fp16' | 'fp8' | 'int8' | 'int4' || 'fp16');
+                  }
+                }}
                 className="select select-bordered w-full"
-              >
+                >
                 <option value="">Select a card</option>
                 {gpuCards.map(c => <option key={c.name}>{c.name}</option>)}
-              </select>
+                </select>
             </div>
           </div>
 
@@ -492,7 +520,12 @@ export default function LLMVRAMCalculator() {
                 {/* as now (202506) vllm not fully powered by fp8, fp8=fp16
                 and for those lack of fp16 (pre-ampere gv1xx card), just
                 only support 32-bit k-v */}
-                Quant: {selectedCard?.processPower.fp16 ? '8-bit' : '32-bit'}
+                Quant: {
+                  selectedCard?.kvQuantType === 'fp8' ? '8-bit' :
+                  selectedCard?.kvQuantType === 'fp16' ? '16-bit' :
+                  selectedCard?.kvQuantType === 'int8' ? '8-bit' :
+                  selectedCard?.kvQuantType === 'int4' ? '4-bit' : '32-bit'
+                }
               </div>
             </div>
 

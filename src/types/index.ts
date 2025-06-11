@@ -4,6 +4,7 @@ export interface GPUCard {
   name: string;
   vramGb: number;               // total device VRAM in GB  
   memoryBandwidthGBs: number;   // GB/s
+  kvQuantType?: string;        // quantization type for KV cache, e.g., 'fp8', 'int8'
   processPower: Partial<Record<QuantType, number>>;
   // processPower: {
   //   fp16: number;               // TFLOPS
