@@ -1,4 +1,4 @@
-export type QuantType = 'fp16' | 'fp8' | 'int8' | 'int4';
+export type QuantType = 'fp64' | 'fp32' | 'fp16' | 'fp8' | 'int8' | 'int4';
 
 export interface GPUCard {
   name: string;

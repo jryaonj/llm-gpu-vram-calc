@@ -13,7 +13,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 0.6,
     totalParamsB: 0.6,
     modelSizeGB: 0.31,
-    perKVsizeFp8: (28 * 8 * 256) / 2, // 28672 bytes
+    perKVsizeFp8: 28 * 8 * 256,
     quantType: 'fp8',
     quantBits: 8,
     awqGroup: 32,
@@ -28,7 +28,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 1.7,
     totalParamsB: 1.7,
     modelSizeGB: 0.90,
-    perKVsizeFp8: (28 * 8 * 128) / 2, // 14336 bytes
+    perKVsizeFp8: 28 * 8 * 128,
     quantType: 'fp8',
     quantBits: 8,
     awqGroup: 32,
@@ -43,7 +43,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 4.0,
     totalParamsB: 4.0,
     modelSizeGB: 2.10,
-    perKVsizeFp8: (36 * 8 * 128) / 2, // 18432 bytes
+    perKVsizeFp8: 36 * 8 * 128,
     quantType: 'fp8',
     quantBits: 8,
     awqGroup: 32,
@@ -58,7 +58,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 3.0,
     totalParamsB: 30.53,
     modelSizeGB: 16.70,
-    perKVsizeFp8: (48 * 4 * 128) / 2, // 12288 bytes
+    perKVsizeFp8: 48 * 4 * 128,
     quantType: 'fp8',
     quantBits: 8,
     awqGroup: 64,
@@ -73,7 +73,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 8.2,
     totalParamsB: 8.2,
     modelSizeGB: 4.86,
-    perKVsizeFp8: (36 * 8 * 128) / 2, // 18432 bytes
+    perKVsizeFp8: 36 * 8 * 128,
     quantType: 'fp8',
     quantBits: 8,
     awqGroup: 32,
@@ -88,7 +88,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 14.8,
     totalParamsB: 14.8,
     modelSizeGB: 10.15,
-    perKVsizeFp8: (40 * 8 * 128) / 2, // 20480 bytes
+    perKVsizeFp8: 40 * 8 * 128,
     quantType: 'fp8',
     quantBits: 8,
     awqGroup: 16,
@@ -103,7 +103,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 32.8,
     totalParamsB: 32.8,
     modelSizeGB: 19.45,
-    perKVsizeFp8: (64 * 8 * 128) / 2, // 32768 bytes
+    perKVsizeFp8: 64 * 8 * 128,
     quantType: 'fp8',
     quantBits: 8,
     awqGroup: 32,
@@ -118,8 +118,7 @@ export const modelDefs: ModelDef[] = [
     activeParamsB: 22.0,
     totalParamsB: 235.09,
     modelSizeGB: 128.56,
-    perKVsizeFp8: (94 * 4 * 128) / 2, // 24064 bytes
-    quantType: 'fp8',
+    perKVsizeFp8: (94 * 4 * 128) * 2, // 48640 bytes
     quantBits: 8,
     awqGroup: 32,
     layers: 94,
