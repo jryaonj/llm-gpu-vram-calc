@@ -1,0 +1,36 @@
+# .github/workflows/deploy.yml
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SUBDIR: llmcalc
+
+    steps:
+      # 1 Checkout
+      - uses: actions/checkout@v4
+
+      # 2 Node + pnpm cache
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # 3 Install deps
+      - run: pnpm install
+
+      # 4 Build (shell expands $SUBDIR)
+      - run: PUBLIC_URL=/$SUBDIR pnpm run build
+
+      # 5 Deploy to gh-pages
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/llm_gpu_vram_calc
+          destination_dir: ${{ env.SUBDIR }}
+          # keep_files: true
+          force_orphan: true
