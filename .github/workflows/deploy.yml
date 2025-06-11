@@ -1,7 +1,7 @@
 # .github/workflows/deploy.yml
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
