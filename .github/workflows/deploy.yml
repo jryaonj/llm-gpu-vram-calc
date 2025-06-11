@@ -24,10 +24,10 @@ jobs:
           version: 9                # exact or range (^9, 9.x, latest…)
 
       # 3. Install deps
-      - run: pnpm install
+      - run: npm install
 
       # 4. Build
-      - run: PUBLIC_URL=/$SUBDIR pnpm run build
+      - run: PUBLIC_URL=/$SUBDIR npm run build
 
       # 5. Configure Pages metadata (required by Pages deployments)
       - uses: actions/configure-pages@v5   # current major version
