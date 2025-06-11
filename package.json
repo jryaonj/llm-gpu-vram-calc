@@ -1,5 +1,5 @@
 {
-	"name": "llm-gpu-calc",
+	"name": "llm-gpu-vram-calc",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
