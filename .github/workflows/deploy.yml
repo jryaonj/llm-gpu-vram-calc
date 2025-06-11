@@ -47,6 +47,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist/llm_gpu_vram_calc
+          publish_dir: dist/client
           destination_dir: ${{ env.SUBDIR }}
           force_orphan: true
