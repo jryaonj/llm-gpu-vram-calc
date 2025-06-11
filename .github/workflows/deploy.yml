@@ -16,12 +16,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22          # or 20 for LTS
-          cache: pnpm               # enable pnpm store cache
+      #     cache: npm               # enable pnpm store cache
 
-      # 2. pnpm (puts it on PATH)
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9                # exact or range (^9, 9.x, latest…)
+      # # 2. pnpm (puts it on PATH)
+      # - uses: pnpm/action-setup@v4
+      #   with:
+      #     version: 9                # exact or range (^9, 9.x, latest…)
 
       # 3. Install deps
       - run: npm install
