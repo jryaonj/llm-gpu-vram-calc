@@ -37,7 +37,9 @@ jobs:
       - run: npm install
 
       # 4. Build
-      - run: PUBLIC_URL=/${{ github.event.repository.name }} npm run build
+      # vite build will output to dist/client by default
+      # - run: PUBLIC_URL=/${{ github.event.repository.name }} npm run build
+      - run: npm run build -- --base=/${{ github.event.repository.name }}/
 
       # 5. Configure Pages metadata (required by Pages deployments)
       - uses: actions/configure-pages@v5   # current major version
@@ -48,5 +50,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dist/client
-          destination_dir: ${{ github.event.repository.name }}
+          destination_dir: .
           force_orphan: true
