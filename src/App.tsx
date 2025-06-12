@@ -15,14 +15,6 @@ function App() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-base-content/70">
               <span>© 2025</span>
-              <a 
-                href="https://github.com/jryaonj"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link link-hover font-medium"
-              >
-                jryaonj
-              </a>
             </div>
 
             <div className="flex items-center gap-6">
@@ -31,13 +23,13 @@ function App() {
                 <Heart className="w-4 h-4 text-error animate-pulse" />
                 <span>by</span>
                 <a 
-                  href="https://github.com/jryaonj/llm-gpu-vram-calc"
+                  href="https://github.com/jryaonj"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link link-hover font-medium flex items-center gap-1"
                 >
                   <Github className="w-4 h-4" />
-                  <span>llm-gpu-vram-calc</span>
+                  <span>jryaonj</span>
                 </a>
               </div>
             </div>
