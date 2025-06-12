@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Info } from 'lucide-react';
+import { Info, Github, Settings2 } from 'lucide-react';
 
 // --- CONFIG: please populate these arrays from your spreadsheet export ---
 
@@ -77,6 +77,10 @@ export default function LLMVRAMCalculator() {
   const [parallelGPUs, setParallelGPUs] = useState<number>(1);
   const [isAdvanced, setIsAdvanced] = useState(false);
 
+  // Add touch event handler for range inputs
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
 
   useEffect(() => {
     if (selectedCard && selectedModel) {
@@ -191,48 +195,59 @@ export default function LLMVRAMCalculator() {
   }, [selectedCard, selectedModel, quantType, maxLength, userCount, vramUtilProportion, minReserveVramGB, parallelGPUs]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-extrabold">LLM GPU VRAM & Speed Calculator</h1>
-        <label className="flex items-center space-x-2">
-          <span>Advanced</span>
-          <div className="grid items-center gap-2">
-            <input
-              type="checkbox"
-              checked={isAdvanced}
-              onChange={e => setIsAdvanced(e.target.checked)}
-              className="toggle toggle-primary"
-            />
-          </div>
-        </label>
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          LLM GPU VRAM & Speed Calculator
+        </h1>
+        <div className="flex items-center gap-4">
+          <a
+            href="https://github.com/jryaonj/llm-gpu-vram-calc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-ghost btn-sm gap-2 hover:scale-105 transition-transform"
+          >
+            <Github className="w-5 h-5" />
+            <span className="hidden sm:inline">Star ★</span>
+          </a>
+          <button
+            onClick={() => setIsAdvanced(!isAdvanced)}
+            className={`btn btn-sm gap-2 transition-all duration-300 ${
+              isAdvanced ? 'btn-primary' : 'btn-ghost'
+            }`}
+          >
+            <Settings2 className="w-4 h-4" />
+            <span>Advanced</span>
+          </button>
+        </div>
       </div>
 
-      <div className="card bg-base-100 shadow-lg p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          {/* Model, Quant, Max Len, Users... */}
+      <div className="card bg-base-100 shadow-lg p-4 sm:p-6 transition-all duration-300">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Model Selection */}
           <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">Model</span>
+            <label className="label">
+              <span className="label-text font-medium">Model</span>
             </label>
             <select
-              // defaultValue=
               value={selectedModel?.name || ""}
               onChange={e => setSelectedModel(modelDefs.find(m => m.name === e.target.value) || null)}
-              className="select select-bordered w-full"
+              className="select select-bordered w-full transition-all duration-200 hover:border-primary focus:border-primary"
             >
               <option value="">Select a model</option>
               {modelDefs.map(m => <option key={m.name}>{m.name}</option>)}
             </select>
           </div>
 
+          {/* Model Quantization */}
           <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">Model Quantization</span>
+            <label className="label">
+              <span className="label-text font-medium">Model Quantization</span>
             </label>
             <select
               value={quantType}
               onChange={e => setQuantType(e.target.value as any)}
-              className="select select-bordered w-full"
+              className="select select-bordered w-full transition-all duration-200 hover:border-primary focus:border-primary"
             >
               <option value="int4">AWQ/GPTQ/INT4</option>
               <option value="fp8">FP8/INT8</option>
@@ -240,340 +255,343 @@ export default function LLMVRAMCalculator() {
             </select>
           </div>
 
+          {/* GPU Card Selection */}
           <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">GPU Card</span>
+            <label className="label">
+              <span className="label-text font-medium">GPU Card</span>
               <span
                 className="tooltip tooltip-bottom"
                 data-tip="Card marked with * are theoretical estimates and may not even properly execute."
-                >
-                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer"/>
+              >
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors" />
               </span>
             </label>
-            <div className="grid items-center gap-2">
-                <select
-                onChange={e => {
-                  const card = gpuCards.find(c => c.name === e.target.value) || null;
-                  setSelectedCard(card);
-                  if (card) {
-                  // Auto set KV cache quantization based on card capabilities
+            <select
+              onChange={e => {
+                const card = gpuCards.find(c => c.name === e.target.value) || null;
+                setSelectedCard(card);
+                if (card) {
                   _setKvQuantType(card.kvQuantType as 'fp16' | 'fp8' | 'int8' | 'int4' || 'fp16');
-                  }
-                }}
-                className="select select-bordered w-full"
-                >
-                <option value="">Select a card</option>
-                {gpuCards.map(c => <option key={c.name}>{c.name}</option>)}
-                </select>
-            </div>
+                }
+              }}
+              className="select select-bordered w-full transition-all duration-200 hover:border-primary focus:border-primary"
+            >
+              <option value="">Select a card</option>
+              {gpuCards.map(c => <option key={c.name}>{c.name}</option>)}
+            </select>
           </div>
 
+          {/* Parallel GPUs */}
           <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">Parallel GPUs</span>
+            <label className="label">
+              <span className="label-text font-medium">Parallel GPUs</span>
               <span
                 className="tooltip tooltip-bottom"
                 data-tip="Number of GPUs to run in parallel. We apply sub-linear scaling efficiency: throughput (gpu_pp) scales as n⁰·⁶ and memory bandwidth (gpu_membw) as n⁰·⁸."
-                >
-                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer"/>
+              >
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors" />
               </span>
             </label>
-            
-            <div className="grid items-center gap-2">
+            <div className="flex items-center gap-4">
               <input
                 type="range"
                 min={1}
                 max={8}
                 value={parallelGPUs}
                 onChange={e => setParallelGPUs(+e.target.value)}
-                className="range range-primary"
+                onTouchMove={handleTouchMove}
+                className="range range-primary flex-grow"
               />
-              <span className="text-sm text-gray-500">
-                {parallelGPUs} GPU{parallelGPUs > 1 && 's'}
-              </span>
+              {isAdvanced ? (
+                <input
+                  type="number"
+                  value={parallelGPUs}
+                  onChange={e => setParallelGPUs(Math.min(8, Math.max(1, +e.target.value)))}
+                  className="input input-bordered w-20 text-center"
+                  min={1}
+                  max={8}
+                />
+              ) : (
+                <span className="text-sm font-medium min-w-[3rem] text-center">
+                  {parallelGPUs}
+                </span>
+              )}
             </div>
           </div>
 
+          {/* VRAM Utilization */}
           <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">VRAM Util (%)</span>
-              {/* tooltip-bottom will show the pop-up on hover */}
+            <label className="label">
+              <span className="label-text font-medium">VRAM Utilization</span>
               <span 
                 className="tooltip tooltip-bottom" 
-                data-tip="What percentage of your card’s VRAM should be reserved for model + cache."
+                data-tip="What percentage of your card's VRAM should be reserved for model + cache."
               >
-                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer"/>
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors" />
               </span>
             </label>
-            <div className="grid items-center gap-2">
+            <div className="flex items-center gap-4">
               <input
                 type="range"
                 min={10}
                 max={100}
                 value={vramUtilProportion * 100}
                 onChange={e => setVramUtilProportion(+e.target.value / 100)}
-                className="range range-secondary"
+                onTouchMove={handleTouchMove}
+                className="range range-secondary flex-grow"
               />
-              <span className="text-sm text-gray-500">
-                {(vramUtilProportion * 100).toFixed(0)}%
-              </span>
+              {isAdvanced ? (
+                <input
+                  type="number"
+                  value={Math.round(vramUtilProportion * 100)}
+                  onChange={e => setVramUtilProportion(Math.min(100, Math.max(10, +e.target.value)) / 100)}
+                  className="input input-bordered w-20 text-center"
+                  min={10}
+                  max={100}
+                />
+              ) : (
+                <span className="text-sm font-medium min-w-[3rem] text-center">
+                  {Math.round(vramUtilProportion * 100)}%
+                </span>
+              )}
             </div>
           </div>
 
+          {/* Reserve VRAM */}
           <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">Reserve VRAM (GB)</span>
-              {/* tooltip-bottom will show the pop-up on hover */}
-                <span 
+            <label className="label">
+              <span className="label-text font-medium">Reserve VRAM</span>
+              <span 
                 className="tooltip tooltip-bottom" 
                 data-tip="Minimum VRAM to reserve for system and other GPU tasks (embedding, rerank, etc). This ensures stable operation when running multiple models."
-                >
-                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer"/>
-                </span>
+              >
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors" />
+              </span>
             </label>
-            {isAdvanced ? (
-              <div className="grid items-center gap-2">
-                <input
-                  type="range"
-                  min={0}
-                  max={selectedCard ? selectedCard.vramGb : 16}
-                  value={minReserveVramGB}
-                  onChange={e => setMinReserveVramGB(+e.target.value)}
-                  className="range range-secondary flex-grow"
-                  step={0.5}
-                />
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min={0}
+                max={selectedCard ? selectedCard.vramGb : 16}
+                value={minReserveVramGB}
+                onChange={e => setMinReserveVramGB(+e.target.value)}
+                onTouchMove={handleTouchMove}
+                className="range range-secondary flex-grow"
+                step={0.5}
+              />
+              {isAdvanced ? (
                 <input
                   type="number"
                   value={minReserveVramGB}
-                  onChange={e => setMinReserveVramGB(+e.target.value)}
-                  className="input input-bordered w-24"
+                  onChange={e => setMinReserveVramGB(Math.min(selectedCard ? selectedCard.vramGb : 16, Math.max(0, +e.target.value)))}
+                  className="input input-bordered w-20 text-center"
                   min={0}
                   max={selectedCard ? selectedCard.vramGb : 16}
                   step={0.5}
                 />
-              </div>
-            ) : (
-              <div className="grid items-center gap-2">
-                <input
-                  type="range"
-                  min={0}
-                  max={selectedCard ? selectedCard.vramGb : 16}
-                  value={minReserveVramGB}
-                  onChange={e => setMinReserveVramGB(+e.target.value)}
-                  className="range range-secondary flex-grow"
-                  step={0.5}
-                />
-                <span className="text-sm text-gray-500">{minReserveVramGB} GB</span>
-              </div>
-            )}
+              ) : (
+                <span className="text-sm font-medium min-w-[3rem] text-center">
+                  {minReserveVramGB}GB
+                </span>
+              )}
+            </div>
           </div>
 
+          {/* Max Length */}
           <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">Max Length (tokens)</span>
-              {/* tooltip-bottom will show the pop-up on hover */}
-                <span 
+            <label className="label">
+              <span className="label-text font-medium">Max Length</span>
+              <span 
                 className="tooltip tooltip-bottom" 
                 data-tip="Maximum sequence length (in tokens) that the model will process. Longer sequences require more VRAM for KV cache."
-                >
-                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer"/>
-                </span>
+              >
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors" />
+              </span>
             </label>
             {isAdvanced ? (
-              <div className="grid items-center gap-2">
+              <div className="flex items-center gap-4">
                 <input
                   type="range"
                   min={2048}
                   max={131072}
                   value={maxLength}
                   onChange={e => setMaxLength(+e.target.value)}
+                  onTouchMove={handleTouchMove}
                   className="range range-success flex-grow"
                   step={1}
                 />
                 <input
                   type="number"
                   value={maxLength}
-                  onChange={e => setMaxLength(+e.target.value)}
-                  className="input input-bordered w-24"
+                  onChange={e => setMaxLength(Math.min(131072, Math.max(2048, +e.target.value)))}
+                  className="input input-bordered w-24 text-center"
                   min={2048}
                   max={131072}
                 />
               </div>
             ) : (
-                <div className="grid items-center gap-2">
+              <div className="flex items-center gap-4">
                 <input
                   type="range"
                   min={0}
                   max={12}
                   value={[2048, 4096, 8192, 12288, 16384, 20480, 24576, 28672, 32768, 40960, 65536, 98304, 131072].indexOf(maxLength)}
                   onChange={e => setMaxLength([2048, 4096, 8192, 12288, 16384, 20480, 24576, 28672, 32768, 40960, 65536, 98304, 131072][Number(e.target.value)])}
-                  className="range range-success range-with-marks"
+                  onTouchMove={handleTouchMove}
+                  className="range range-success range-with-marks flex-grow"
                 />
-                <span className="text-sm text-gray-500">{maxLength} tokens</span>
-                </div>
-            )}
-          </div>
-
-          <div className="form-control">
-            <label className="label flex justify-between items-center">
-              <span className="label-text">Concurrent Users</span>
-              {/* tooltip-bottom will show the pop-up on hover */}
-              <span 
-              className="tooltip tooltip-bottom" 
-              data-tip="Number of users concurrently using the model. The throughput speed will be divided among these users."
-              >
-              <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer"/>
-              </span>
-            </label>
-            {isAdvanced ? (
-              <div className="grid items-center gap-2">
-                <input
-                  type="range"
-                  min={1}
-                  max={1000}
-                  value={userCount}
-                  onChange={e => setUserCount(+e.target.value)}
-                  className="range range-accent flex-grow"
-                  step={1}
-                />
-                <input
-                  type="number"
-                  min={1}
-                  max={1000}
-                  value={userCount}
-                  onChange={e => setUserCount(+e.target.value)}
-                  className="input input-bordered w-24"
-                />
-              </div>
-            ) : (
-              // <div className="space-y-2">
-              <div className="grid items-center gap-2">
-                <input
-                  type="range"
-                  min={1}
-                  max={100}
-                  value={userCount}
-                  onChange={e => setUserCount(+e.target.value)}
-                  className="range range-accent flex-grow"
-                  step={1}
-                />
-                <span className="text-sm text-gray-500">
-                  {userCount} User{userCount > 1 ? 's' : ''}
+                <span className="text-sm font-medium min-w-[4rem] text-center">
+                  {maxLength.toLocaleString()}
                 </span>
               </div>
             )}
           </div>
 
+          {/* Concurrent Users */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Concurrent Users</span>
+              <span 
+                className="tooltip tooltip-bottom" 
+                data-tip="Number of users concurrently using the model. The throughput speed will be divided among these users."
+              >
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors" />
+              </span>
+            </label>
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min={1}
+                max={isAdvanced ? 1000 : 100}
+                value={userCount}
+                onChange={e => setUserCount(+e.target.value)}
+                onTouchMove={handleTouchMove}
+                className="range range-accent flex-grow"
+                step={1}
+              />
+              {isAdvanced ? (
+                <input
+                  type="number"
+                  value={userCount}
+                  onChange={e => setUserCount(Math.min(1000, Math.max(1, +e.target.value)))}
+                  className="input input-bordered w-20 text-center"
+                  min={1}
+                  max={1000}
+                />
+              ) : (
+                <span className="text-sm font-medium min-w-[3rem] text-center">
+                  {userCount}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       {results?.error && (
-        <div className="stat col-span-full">
-          <div className="alert alert-error">
-            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>{results.error}</span>
-          </div>
+        <div className="alert alert-error shadow-lg transition-all duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{results.error}</span>
         </div>
       )}
 
       {results ? (
-      <div className="card bg-base-100 shadow-lg p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {/* <div className="max-w-4xl mx-auto">
-        <div className="stats stats-horizontal shadow w-full justify-between"> */}
-          <div className="stat">
-            <div className="stat-title">Total VRAM Required</div>
-            <div className="stat-value">{results.totalVram.toFixed(2)} GB</div>
-            <progress
-              className="progress progress-info w-full"
-              value={(results.usableVram / results.totalVram) * 100}
-              max={100}
-            />
-            <div className="stat-desc">Usable: {results.usableVram.toFixed(2)} GB</div>
-          </div>
-          <div className="stat">
-            <div className="stat-title">Model Weights</div>
-            <div className="stat-value">{results.modelVram.toFixed(2)} GB</div>
-            <progress
-              className="progress progress-success w-full"
-              value={(results.modelVram / results.totalVram) * 100}
-              max={100}
-            />
-            <div className="stat-desc">Quant: {
-              quantType === 'int4' ? '4-bit' :
-              quantType === 'fp8' ? '8-bit' :
-              '16-bit'
-            }</div>
-          </div>
-          
-        {!results?.error && (
-          <>
+        <div className="card bg-base-100 shadow-lg p-4 sm:p-6 transition-all duration-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="stat">
-              <div className="stat-title">Full-length Context KV Cache</div>
-              <div className="stat-value">{results.kvCacheVram.toFixed(2)} GB</div>
+              <div className="stat-title">Total VRAM Required</div>
+              <div className="stat-value">{results.totalVram.toFixed(2)} GB</div>
               <progress
-                className="progress progress-warning w-full"
-                value={(results.kvCacheVram / results.totalVram) * 100}
+                className="progress progress-info w-full"
+                value={(results.usableVram / results.totalVram) * 100}
                 max={100}
               />
-              <div className="stat-desc">
-                {/* as now (202506) vllm not fully powered by fp8, fp8=fp16
-                and for those lack of fp16 (pre-ampere gv1xx card), just
-                only support 32-bit k-v */}
-                Quant: {
-                  selectedCard?.kvQuantType === 'fp8' ? '8-bit' :
-                  selectedCard?.kvQuantType === 'fp16' ? '16-bit' :
-                  selectedCard?.kvQuantType === 'int8' ? '8-bit' :
-                  selectedCard?.kvQuantType === 'int4' ? '4-bit' : '32-bit'
-                }
-              </div>
+              <div className="stat-desc">Usable: {results.usableVram.toFixed(2)} GB</div>
             </div>
-
             <div className="stat">
-              <div className="stat-title">Throughput Gen Speed</div>
-              <div className="stat-value">{results.genSpeed.toFixed(0)} tok/s</div>
-              <div className="stat-desc">parallel eff. ×{results.membwScaling.toFixed(2)}</div>
+              <div className="stat-title">Model Weights</div>
+              <div className="stat-value">{results.modelVram.toFixed(2)} GB</div>
+              <progress
+                className="progress progress-success w-full"
+                value={(results.modelVram / results.totalVram) * 100}
+                max={100}
+              />
+              <div className="stat-desc">Quant: {
+                quantType === 'int4' ? '4-bit' :
+                quantType === 'fp8' ? '8-bit' :
+                '16-bit'
+              }</div>
             </div>
+            
+            {!results?.error && (
+              <>
+                <div className="stat">
+                  <div className="stat-title">Full-length Context KV Cache</div>
+                  <div className="stat-value">{results.kvCacheVram.toFixed(2)} GB</div>
+                  <progress
+                    className="progress progress-warning w-full"
+                    value={(results.kvCacheVram / results.totalVram) * 100}
+                    max={100}
+                  />
+                  <div className="stat-desc">
+                    Quant: {
+                      selectedCard?.kvQuantType === 'fp8' ? '8-bit' :
+                      selectedCard?.kvQuantType === 'fp16' ? '16-bit' :
+                      selectedCard?.kvQuantType === 'int8' ? '8-bit' :
+                      selectedCard?.kvQuantType === 'int4' ? '4-bit' : '32-bit'
+                    }
+                  </div>
+                </div>
 
-            <div className="stat">
-              <div className="stat-title">Throughput Prompt Speed</div>
-              <div className="stat-value">{results.promptSpeed.toFixed(0)} tok/s</div>
-              <div className="stat-desc">parallel eff. ×{results.ppScaling.toFixed(2)}</div>
-            </div>
+                <div className="stat">
+                  <div className="stat-title">Throughput Gen Speed</div>
+                  <div className="stat-value">{results.genSpeed.toFixed(0)} tok/s</div>
+                  <div className="stat-desc">parallel eff. ×{results.membwScaling.toFixed(2)}</div>
+                </div>
 
-            <div className="stat">
-              <div className="stat-title">Max Concurrent Token Capacity</div>
-              <div className="stat-value">{results.maxTokenCountSimultaneous.toFixed(0)} toks</div>
-              <div className="stat-desc">Full-length Context ×{results.fullLengthGenCount.toFixed(2)}</div>
-            </div>
+                <div className="stat">
+                  <div className="stat-title">Throughput Prompt Speed</div>
+                  <div className="stat-value">{results.promptSpeed.toFixed(0)} tok/s</div>
+                  <div className="stat-desc">parallel eff. ×{results.ppScaling.toFixed(2)}</div>
+                </div>
 
-            <div className="stat">
-              <div className="stat-title">Shared Gen Speed</div>
-              <div className="stat-value">{results.sharedGen.toFixed(1)} tok/s</div>
-              <div className="stat-desc">concurrent user ×{userCount}</div>
-            </div>
+                <div className="stat">
+                  <div className="stat-title">Max Concurrent Token Capacity</div>
+                  <div className="stat-value">{results.maxTokenCountSimultaneous.toFixed(0)} toks</div>
+                  <div className="stat-desc">Full-length Context ×{results.fullLengthGenCount.toFixed(2)}</div>
+                </div>
 
-            <div className="stat">
-              <div className="stat-title">Shared Prompt Speed</div>
-              <div className="stat-value">{results.sharedPrompt.toFixed(1)} tok/s</div>
-              <div className="stat-desc">concurrent user ×{userCount}</div>
-            </div>
-          </>
-        )}
+                <div className="stat">
+                  <div className="stat-title">Shared Gen Speed</div>
+                  <div className="stat-value">{results.sharedGen.toFixed(1)} tok/s</div>
+                  <div className="stat-desc">concurrent user ×{userCount}</div>
+                </div>
 
-        {selectedCard && selectedModel && (
-            <div className="stat">
-              <div className="stat-title">{selectedCard.name}</div>
-              <div className="stat-value">{selectedCard.memoryBandwidthGBs} GB/s</div>
-              <div className="stat-desc">
-                {selectedCard?.processPower.fp16 ? 'FP16' : 'FP32'}: {selectedCard.processPower.fp16 || selectedCard.processPower.fp32} TFLOPS
-              </div>
-            </div>
-        )}
+                <div className="stat">
+                  <div className="stat-title">Shared Prompt Speed</div>
+                  <div className="stat-value">{results.sharedPrompt.toFixed(1)} tok/s</div>
+                  <div className="stat-desc">concurrent user ×{userCount}</div>
+                </div>
+              </>
+            )}
+
+            {selectedCard && selectedModel && (
+                <div className="stat">
+                  <div className="stat-title">{selectedCard.name}</div>
+                  <div className="stat-value">{selectedCard.memoryBandwidthGBs} GB/s</div>
+                  <div className="stat-desc">
+                    {selectedCard?.processPower.fp16 ? 'FP16' : 'FP32'}: {selectedCard.processPower.fp16 || selectedCard.processPower.fp32} TFLOPS
+                  </div>
+                </div>
+            )}
+          </div>
         </div>
-      </div>
       ) : (
-        <div className="text-center text-gray-400">Select a card & model to see results</div>
+        <div className="text-center text-gray-400 py-8 transition-all duration-300">
+          Select a card & model to see results
+        </div>
       )}
     </div>
   );
