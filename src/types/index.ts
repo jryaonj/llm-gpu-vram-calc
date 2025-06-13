@@ -6,6 +6,8 @@ export interface GPUCard {
   memoryBandwidthGBs: number;   // GB/s
   kvQuantType?: string;        // quantization type for KV cache, e.g., 'fp8', 'int8'
   processPower: Partial<Record<QuantType, number>>;
+  architecture?: string;
+  cores?: number;
   // processPower: {
   //   fp16: number;               // TFLOPS
   //   fp8?: number;               // optional, if different from fp16
