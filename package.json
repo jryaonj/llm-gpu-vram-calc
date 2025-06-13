@@ -1,5 +1,5 @@
 {
-	"name": "llm-gpu-vram-calc",
+	"name": "llm-gpu-vram-calc-beast-mode",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",

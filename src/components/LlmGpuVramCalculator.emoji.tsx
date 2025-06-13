@@ -185,7 +185,7 @@ export default function LLMVRAMCalculator() {
 
       if (totalVramReq > usableVram) {
         setResults({
-          error: `Insufficient VRAM: Need ${totalVramReq.toFixed(2)}GB but only ${usableVram.toFixed(2)}GB available`,
+          error: `💥 💥 Insufficient VRAM! Need! Need ${totalVramReq.toFixed(2)}GB but only ${usableVram.toFixed(2)}GB available! 😱`,
           totalVram: totalVramReq,
           usableVram: usableVram,
           usableKvCacheVram: 0,
@@ -239,7 +239,7 @@ export default function LLMVRAMCalculator() {
     } catch (error) {
       console.error('Calculation error:', error);
       setResults({
-        error: 'Calculation error occurred',
+        error: '💥 Calculation error occurred! Something went wrong! 🚨',
         totalVram: 0,
         usableVram: 0,
         usableKvCacheVram: 0,
@@ -262,8 +262,8 @@ export default function LLMVRAMCalculator() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Side - Configuration */}
       <div className="space-y-6">
-                {/* Model Configuration */}
-                <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl border-2 border-green-300 p-6 shadow-xl">
+        {/* 🤖 AI Model Beast Config 🔥 */}
+        <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl border-2 border-green-300 p-6 shadow-xl">
           {/* Header with inline custom-Model toggle on the right */}
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -325,7 +325,7 @@ export default function LLMVRAMCalculator() {
               <div className="dropdown-clean" tabIndex={0}>
                 <button
                   type="button"
-                  className="dropdown-trigger bg-white hover:bg-green-50 border-green-300"
+                  className="dropdown-trigger bg-white hover:bg-green-50 border-green-300 w-full p-3 rounded-lg border-2 flex items-center justify-between"
                   onClick={() => setDropdownOpenModel(!dropdownOpenModel)}
                 >
                   <div className="flex items-center gap-2">
@@ -338,11 +338,11 @@ export default function LLMVRAMCalculator() {
                   <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpenModel ? 'rotate-180' : ''}`} />
                 </button>
                 {dropdownOpenModel && (
-                  <div className="dropdown-menu max-h-60 overflow-y-auto" onBlur={() => setDropdownOpenModel(false)}>
+                  <div className="absolute z-10 w-full mt-2 bg-white border-2 border-green-300 rounded-lg shadow-xl max-h-60 overflow-y-auto">
                     {modelDefs.map((model) => (
                       <div
                         key={model.name}
-                        className="dropdown-item hover:bg-green-100"
+                        className="p-3 hover:bg-green-100 cursor-pointer border-b border-green-100 last:border-b-0"
                         onClick={() => {
                           setSelectedModel(model);
                           setDropdownOpenModel(false);
@@ -369,7 +369,7 @@ export default function LLMVRAMCalculator() {
             )}
 
             <div>
-              <label className="block text-sm font-bold text-green-800 mb-2">🔧 Model Quantization Magic</label>
+              <label className="block text-sm font-bold text-green-800 mb-2">🔧 🔧 Model Quantization Magic Magic</label>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { value: 'int4', label: 'INT4', desc: '🚀 Speed Demon', emoji: '🚀' },
@@ -395,7 +395,7 @@ export default function LLMVRAMCalculator() {
           </div>
         </div>
 
-        {/* GPU Configuration */}
+        {/* 🎮 GPU Beast Selection 💪 */}
         <div className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-2xl border-2 border-blue-300 p-6 shadow-xl">
           {/* Header with inline custom-GPU toggle on the right */}
           <div className="flex items-start justify-between mb-6">
@@ -422,7 +422,7 @@ export default function LLMVRAMCalculator() {
                   <input type="number" value={customVramGB} onChange={e=>setCustomVramGB(+e.target.value)} className="input input-bordered w-full px-2 py-2 border rounded-md" />
                 </div>
                 <div>
-                  <label className="form-label text-blue-800 font-medium">🚄 Memory Bandwidth (GB/s)</label>
+                  <label className="form-label text-blue-800 font-medium">🚄 🚄 Memory Bandwidth (GB/s)</label>
                   <input type="number" value={customMemoryBandwidthGBs} onChange={e=>setCustomMemoryBandwidthGBs(+e.target.value)} className="input input-bordered w-full px-2 py-2 border rounded-md" />
                 </div>
                 <div>
@@ -430,7 +430,7 @@ export default function LLMVRAMCalculator() {
                   <input type="number" value={customProcessPowerFP16} onChange={e=>setCustomProcessPowerFP16(+e.target.value)} className="input input-bordered w-full px-2 py-2 border rounded-md" />
                 </div>
                 <div>
-                  <label className="form-label text-blue-800 font-medium">🎯 KV Cache Quant</label>
+                  <label className="form-label text-blue-800 font-medium">🎯 🎯 KV Cache Quant</label>
                   <select value={customKvQuantType} onChange={e=>setCustomKvQuantType(e.target.value as any)} className="input input-bordered w-full px-2 py-2 border rounded-md">
                     <option value="fp16">💎 FP16</option>
                     <option value="fp8">⚡ FP8</option>
@@ -447,7 +447,7 @@ export default function LLMVRAMCalculator() {
               <div className="dropdown-clean" tabIndex={0}>
                 <button
                   type="button"
-                  className="dropdown-trigger bg-white hover:bg-blue-50 border-blue-300"
+                  className="dropdown-trigger bg-white hover:bg-blue-50 border-blue-300 w-full p-3 rounded-lg border-2 flex items-center justify-between"
                   onClick={() => setDropdownOpenGPU(!dropdownOpenGPU)}
                 >
                   <div className="flex items-center gap-2">
@@ -460,11 +460,11 @@ export default function LLMVRAMCalculator() {
                   <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpenGPU ? 'rotate-180' : ''}`} />
                 </button>
                 {dropdownOpenGPU && (
-                  <div className="dropdown-menu max-h-60 overflow-y-auto" onBlur={() => setDropdownOpenGPU(false)}>
+                  <div className="absolute z-10 w-full mt-2 bg-white border-2 border-blue-300 rounded-lg shadow-xl max-h-60 overflow-y-auto">
                     {gpuCards.map((card) => (
                       <div
                         key={card.name}
-                        className="dropdown-item hover:bg-blue-100"
+                        className="p-3 hover:bg-blue-100 cursor-pointer border-b border-blue-100 last:border-b-0"
                         onClick={() => {
                           setSelectedCard(card);
                           setDropdownOpenGPU(false);
@@ -492,7 +492,7 @@ export default function LLMVRAMCalculator() {
           </div>
         </div>
 
-        {/* Advanced Settings */}
+        {/* ⚙️ Advanced Beast Settings 🔧 */}
         <div className="bg-gradient-to-br from-purple-50 to-pink-100 rounded-2xl border-2 border-purple-300 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -508,128 +508,76 @@ export default function LLMVRAMCalculator() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-bold text-purple-800 mb-2">
-                  📏 Max Context: {maxLength.toLocaleString()} tokens
+                  📏 📏 Max Context: {maxLength.toLocaleString()} tokens
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min={512}
-                    max={131072}
-                    step={512}
-                    value={maxLength}
-                    onChange={e => setMaxLength(+e.target.value)}
-                    className="flex-grow h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <input
-                    type="number"
-                    min={512}
-                    max={131072}
-                    step={512}
-                    value={maxLength}
-                    onChange={e=>setMaxLength(Math.min(131072, Math.max(512, +e.target.value)))}
-                    className="input input-bordered w-24 text-center"
-                  />
-                </div>
+                <input
+                  type="range"
+                  min={512}
+                  max={131072}
+                  step={512}
+                  value={maxLength}
+                  onChange={e => setMaxLength(+e.target.value)}
+                  className="w-full h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                />
               </div>
               
               <div>
                 <label className="block text-sm font-bold text-purple-800 mb-2">
-                  👥 Users: {userCount} legends
+                  👥 👥 Users: {userCount} legends
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min={1}
-                    max={100}
-                    value={userCount}
-                    onChange={e => setUserCount(+e.target.value)}
-                    className="flex-grow h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={100}
-                    value={userCount}
-                    onChange={e=>setUserCount(Math.min(100, Math.max(1, +e.target.value)))}
-                    className="input input-bordered w-20 text-center"
-                  />
-                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={userCount}
+                  onChange={e => setUserCount(+e.target.value)}
+                  className="w-full h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-purple-800 mb-2">
-                  🔥 Parallel GPUs: {parallelGPUs} beasts
+                  🔥 🔥 Parallel GPUs: {parallelGPUs} beasts
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min={1}
-                    max={8}
-                    value={parallelGPUs}
-                    onChange={e => setParallelGPUs(+e.target.value)}
-                    className="flex-grow h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={8}
-                    value={parallelGPUs}
-                    onChange={e=>setParallelGPUs(Math.min(8, Math.max(1, +e.target.value)))}
-                    className="input input-bordered w-20 text-center"
-                  />
-                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={8}
+                  value={parallelGPUs}
+                  onChange={e => setParallelGPUs(+e.target.value)}
+                  className="w-full h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                />
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-bold text-purple-800 mb-2">
-                  💪 VRAM Usage: {Math.round(vramUtilProportion*100)}% beast mode
+                  💪 💪 VRAM Usage: {Math.round(vramUtilProportion*100)}% beast mode
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min={10}
-                    max={100}
-                    value={Math.round(vramUtilProportion*100)}
-                    onChange={e => setVramUtilProportion(+e.target.value/100)}
-                    className="flex-grow h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <input
-                    type="number"
-                    min={10}
-                    max={100}
-                    value={Math.round(vramUtilProportion*100)}
-                    onChange={e=>setVramUtilProportion(Math.min(100,Math.max(10,+e.target.value))/100)}
-                    className="input input-bordered w-20 text-center"
-                  />
-                </div>
+                <input
+                  type="range"
+                  min={10}
+                  max={100}
+                  value={Math.round(vramUtilProportion*100)}
+                  onChange={e => setVramUtilProportion(+e.target.value/100)}
+                  className="w-full h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                />
               </div>
               
               <div>
                 <label className="block text-sm font-bold text-purple-800 mb-2">
-                  🛡️ Reserve VRAM: {minReserveVramGB}GB safety net
+                  🛡️ 🛡️ Reserve VRAM: {minReserveVramGB}GB safety net
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min={0}
-                    max={12}
-                    step={0.5}
-                    value={minReserveVramGB}
-                    onChange={e => setMinReserveVramGB(+e.target.value)}
-                    className="flex-grow h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    max={8}
-                    step={0.5}
-                    value={minReserveVramGB}
-                    onChange={e=>setMinReserveVramGB(Math.min(8, Math.max(0, +e.target.value)))}
-                    className="input input-bordered w-20 text-center"
-                  />
-                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={12}
+                  step={0.5}
+                  value={minReserveVramGB}
+                  onChange={e => setMinReserveVramGB(+e.target.value)}
+                  className="w-full h-3 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                />
               </div>
             </div>
           </div>
@@ -653,7 +601,7 @@ export default function LLMVRAMCalculator() {
           </div>
         )}
 
-        {/* Performance Results */}
+        {/* 📊 Beast Mode Results! 🔥 */}
         {results && !results.error ? (
           <div className="bg-gradient-to-br from-indigo-50 to-blue-100 rounded-2xl border-2 border-indigo-300 p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-6">
@@ -692,7 +640,7 @@ export default function LLMVRAMCalculator() {
                 <div className="text-3xl font-bold text-blue-600 mb-1 flex items-center gap-2">
                   🧠 {results.modelVram.toFixed(1)} GB
                 </div>
-                <div className="text-sm text-blue-700 font-bold">🤖 Model Weights</div>
+                <div className="text-sm text-blue-700 font-bold">🤖 🤖 Model Weights</div>
                 <div className="text-xs text-blue-500 mt-1 font-medium">
                   ⚡ {quantType === 'int4' ? '4-bit 🚀' : quantType === 'fp8' ? '8-bit ⚡' : '16-bit 💎'} quantization
                 </div>
@@ -702,7 +650,7 @@ export default function LLMVRAMCalculator() {
                 <div className="text-3xl font-bold text-green-600 mb-1 flex items-center gap-2">
                   💾 {results.kvCacheVram.toFixed(1)} GB
                 </div>
-                <div className="text-sm text-green-700 font-bold">🎯 KV Cache</div>
+                <div className="text-sm text-green-700 font-bold">🎯 🎯 KV Cache</div>
                 <div className="text-xs text-green-500 mt-1 font-medium">
                   📏 {maxLength.toLocaleString()} tokens context
                 </div>
@@ -731,11 +679,11 @@ export default function LLMVRAMCalculator() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gradient-to-br from-yellow-50 to-orange-100 rounded-lg p-3 border border-yellow-300">
                     <div className="text-2xl font-bold text-orange-600">⚡ {results.genSpeed.toFixed(0)} tok/s</div>
-                    <div className="text-sm text-orange-700 font-medium">🔥 Generation Speed</div>
+                    <div className="text-sm text-orange-700 font-medium">🔥 🔥 Generation Speed</div>
                   </div>
                   <div className="bg-gradient-to-br from-purple-50 to-pink-100 rounded-lg p-3 border border-purple-300">
                     <div className="text-2xl font-bold text-purple-600">🚀 {results.promptSpeed.toFixed(0)} tok/s</div>
-                    <div className="text-sm text-purple-700 font-medium">💭 Prompt Processing</div>
+                    <div className="text-sm text-purple-700 font-medium">💭 💭 Prompt Processing</div>
                   </div>
                 </div>
               </div>
@@ -745,17 +693,17 @@ export default function LLMVRAMCalculator() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gradient-to-br from-green-50 to-teal-100 rounded-lg p-3 border border-green-300">
                     <div className="text-2xl font-bold text-green-600">💪 {results.sharedGen.toFixed(1)} tok/s</div>
-                    <div className="text-sm text-green-700 font-medium">🎯 Per User Generation</div>
+                    <div className="text-sm text-green-700 font-medium">🎯 🎯 Per User Generation</div>
                   </div>
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg p-3 border border-blue-300">
                     <div className="text-2xl font-bold text-blue-600">⚡ {results.sharedPrompt.toFixed(0)} tok/s</div>
-                    <div className="text-sm text-blue-700 font-medium">💭 Per User Prompt</div>
+                    <div className="text-sm text-blue-700 font-medium">💭 💭 Per User Prompt</div>
                   </div>
                 </div>
               </div>
 
               <div className="border-t-2 border-indigo-200 pt-4">
-                <h4 className="font-bold text-indigo-900 mb-3 text-lg">📊 Beast Capacity</h4>
+                <h4 className="font-bold text-indigo-900 mb-3 text-lg">📊 Beast 📊 Beast Capacity</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gradient-to-br from-red-50 to-pink-100 rounded-lg p-3 border border-red-300">
                     <div className="text-2xl font-bold text-red-600">🔥 {results.fullLengthGenCount.toFixed(2)}</div>
@@ -763,7 +711,7 @@ export default function LLMVRAMCalculator() {
                   </div>
                   <div className="bg-gradient-to-br from-cyan-50 to-blue-100 rounded-lg p-3 border border-cyan-300">
                     <div className="text-2xl font-bold text-cyan-600">💎 {results.maxTokenCountSimultaneous.toFixed(0)}</div>
-                    <div className="text-sm text-cyan-700 font-medium">🚀 Total Tokens Capacity</div>
+                    <div className="text-sm text-cyan-700 font-medium">🚀 Total Tokens 📊 Beast Capacity</div>
                   </div>
                 </div>
               </div>
@@ -772,15 +720,15 @@ export default function LLMVRAMCalculator() {
                 <h4 className="font-bold text-indigo-900 mb-3 text-lg">🎮 Hardware Beast Info</h4>
                 <div className="space-y-2 bg-gradient-to-br from-gray-50 to-slate-100 rounded-lg p-4 border border-gray-300">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 font-medium">🎮 GPU Model</span>
+                    <span className="text-sm text-gray-600 font-medium">🎮 🎮 GPU Model</span>
                     <span className="text-sm font-bold text-gray-900">{useCustomGPU ? '🔧 Custom GPU Beast' : `🎮 ${stripVendor(selectedCard?.name || '')}`}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 font-medium">🚄 Memory Bandwidth</span>
+                    <span className="text-sm text-gray-600 font-medium">🚄 🚄 Memory Bandwidth</span>
                     <span className="text-sm font-bold text-gray-900">⚡ {useCustomGPU ? customMemoryBandwidthGBs : selectedCard?.memoryBandwidthGBs} GB/s</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 font-medium">💪 FP16 Performance</span>
+                    <span className="text-sm text-gray-600 font-medium">💪 💪 FP16 Performance</span>
                     <span className="text-sm font-bold text-gray-900">🔥 {useCustomGPU ? customProcessPowerFP16.toFixed(1) : (selectedCard?.processPower?.fp16 || 0).toFixed(1)} TFLOPS</span>
                   </div>
                 </div>
@@ -790,7 +738,7 @@ export default function LLMVRAMCalculator() {
         ) : !results?.error && (
           <div className="bg-gradient-to-br from-gray-50 to-slate-100 rounded-2xl border-2 border-dashed border-gray-400 p-12 text-center shadow-xl">
             <div className="text-6xl mb-4">🚀</div>
-            <h3 className="text-xl font-bold text-gray-700 mb-2">🔥 Ready to Calculate Beast Mode! 💪</h3>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">🔥 🔥 Ready to Calculate Beast Mode! Beast Mode! 💪</h3>
             <p className="text-gray-600 font-medium">🎯 Pick your GPU and AI model to see epic results! ⚡🤖💎</p>
           </div>
         )}
