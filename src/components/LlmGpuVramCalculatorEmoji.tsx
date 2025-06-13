@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, ChevronDown, Cpu, BarChart3, Zap, HardDrive, Users } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 import type { GPUCard, ModelDef, CalcResults } from '../types/index.ts';
 import { gpuCards } from '../data/gpuCards.ts';
