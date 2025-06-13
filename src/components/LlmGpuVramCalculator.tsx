@@ -177,7 +177,10 @@ export default function LLMVRAMCalculator() {
       const modelVram = computeModelVramGB(effectiveModel, quantType);
       const kvCacheVram = computeKvCacheVramGB(effectiveModel.hiddenSize, maxLength, kvQuantType, effectiveModel, effectiveCard);
       const totalCardVram = effectiveCard.vramGb * parallelGPUs;
-      const usableVram = Math.max(0, totalCardVram * vramUtilProportion - minReserveVramGB);
+      // pick the larger of the %-based reserve and the fixed minimum
+      const proportionalReserve = totalCardVram * (1 - vramUtilProportion);
+      const effectiveReserve   = Math.max(proportionalReserve, minReserveVramGB);
+      const usableVram         = Math.max(0, totalCardVram - effectiveReserve);
       const totalVramReq = modelVram + kvCacheVram;
 
       if (totalVramReq > usableVram) {
@@ -186,7 +189,7 @@ export default function LLMVRAMCalculator() {
           totalVram: totalVramReq,
           usableVram: usableVram,
           usableKvCacheVram: 0,
-          reservedVram: minReserveVramGB,
+          reservedVram: effectiveReserve,
           modelVram: modelVram,
           kvCacheVram: kvCacheVram,
           genSpeed: 0,
@@ -220,7 +223,7 @@ export default function LLMVRAMCalculator() {
         totalVram: totalVramReq,
         usableVram: usableVram,
         usableKvCacheVram: usableKvCacheVram,
-        reservedVram: minReserveVramGB,
+        reservedVram: effectiveReserve,
         modelVram: modelVram,
         kvCacheVram: kvCacheVram,
         genSpeed: genSpeed,
@@ -619,7 +622,7 @@ export default function LLMVRAMCalculator() {
                   <input
                     type="range"
                     min={0}
-                    max={8}
+                    max={12}
                     step={0.5}
                     value={minReserveVramGB}
                     onChange={e => setMinReserveVramGB(+e.target.value)}
@@ -685,7 +688,8 @@ export default function LLMVRAMCalculator() {
                   />
                 </div>
                 <div className="text-sm text-gray-500 mt-2">
-                  Using {((results.totalVram / (((useCustomGPU ? customVramGB : (selectedCard?.vramGb || 24))) * parallelGPUs)) * 100).toFixed(1)}% of GPU memory
+                  Using {((results.totalVram / (((useCustomGPU ? customVramGB : (selectedCard?.vramGb || 24))) * parallelGPUs)) * 100).toFixed(1)}% of GPU memory w/i. 1 x full-length request<br/>
+                  {results.fullLengthGenCount.toFixed(2)} x full-length request MAX<br/>
                 </div>
               </div>
             </div>
