@@ -66,7 +66,7 @@ function App() {
                 {useEmoji ? (
                   <>
                     <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                      🔥 LLM VRAM GPU Calculator 💪
+                      🔥 LLM GPU VRAM Calculator 💪
                     </h1>
                     <p className="text-purple-100 flex items-center gap-1">
                       ⚡ Epic VRAM Beast Mode Calculator! 🤖💎✨
@@ -74,7 +74,7 @@ function App() {
                   </>
                 ) : (
                   <>
-                    <h1 className="text-xl font-semibold text-gray-900">LLM VRAM GPU Calculator</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">LLM GPU VRAM Calculator</h1>
                     <p className="text-sm text-gray-500">VRAM requirements and performance estimation for LLM inference</p>
                   </>
                 )}
@@ -89,7 +89,7 @@ function App() {
                 {useEmoji ? '🙂 Normal' : '🎉 Emoji'}
               </button>
               <a
-                href="https://github.com/jryaonj/llm-vram-gpu-calculator"
+                href="https://github.com/jryaonj/llm-gpu-vram-calculator"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={
@@ -124,15 +124,24 @@ function App() {
             <div className="flex items-center gap-1 text-sm text-gray-500">
               {useEmoji ? (
                 <>
-                  <span className="text-gray-300">© 2025 🔥 LLM VRAM GPU Calculator 💪</span>
+                  <span className="text-gray-300">© 2025 🔥 LLM GPU VRAM Calculator 💪</span>
+                  <span className="text-yellow-400">•</span>
+                  <a href="https://jryaonj.github.io" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    jryaonj
+                  </a>
                   <span className="text-yellow-400">•</span>
                   <span className="text-gray-300">⚡ Made for AI Legends! 🚀</span>
                 </>
               ) : (
                 <>
-                  <span>© 2025 LLM VRAM GPU Calculator</span>
+                  <span>© 2025 LLM GPU VRAM Calculator</span>
+                  <span className="text-gray-300">•</span>
+                  <a href="https://jryaonj.github.io" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    jryaonj
+                  </a>
                   <span className="text-gray-300">•</span>
                   <span>Calculations for AI developers</span>
+                  <span className="text-gray-300">•</span>
                 </>
               )}
             </div>
@@ -142,18 +151,18 @@ function App() {
                 <>
                   <span className="text-gray-300">🛠️ Powered by</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-blue-400">⚛️ React</span>
+                    <a href="https://react.dev" className="font-medium text-blue-400 hover:underline">⚛️ React</a>
                     <span className="text-yellow-400">•</span>
-                    <span className="font-medium text-purple-400">🎨 DaisyUI</span>
+                    <a href="https://daisyui.com" className="font-medium text-purple-400 hover:underline">🎨 DaisyUI</a>
                   </div>
                 </>
               ) : (
                 <>
                   <span>Powered by</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-blue-600">React</span>
+                    <a href="https://react.dev" className="font-medium text-blue-600 hover:underline">React</a>
                     <span className="text-gray-300">•</span>
-                    <span className="font-medium text-blue-500">DaisyUI</span>
+                    <a href="https://daisyui.com" className="font-medium text-blue-500 hover:underline">DaisyUI</a>
                   </div>
                 </>
               )}

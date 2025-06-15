@@ -1,7 +1,7 @@
 # LLM GPU VRAM Calculator
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://jryaonj.github.io/llm-gpu-vram-calc)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://jryaonj.github.io/llm-gpu-vram-calculator)
 
 An interactive web tool to calculate VRAM requirements and performance characteristics for running Large Language Models (LLMs) on different GPU configurations.
 
@@ -53,7 +53,7 @@ The calculator uses pre-defined GPU cards and model definitions located in:
 
 ## 🔗 Links
 
-- [Live Demo](https://jryaonj.github.io/llm-gpu-vram-calc)
+- [Live Demo](https://jryaonj.github.io/llm-gpu-vram-calculator)
 
 ## 📄 License
 
