@@ -154,6 +154,8 @@ function App() {
                     <a href="https://react.dev" className="font-medium text-blue-400 hover:underline">⚛️ React</a>
                     <span className="text-yellow-400">•</span>
                     <a href="https://daisyui.com" className="font-medium text-purple-400 hover:underline">🎨 DaisyUI</a>
+                    <span className="text-yellow-400">•</span>
+                    <a href="https://cursor.com" className="font-medium text-purple-400 hover:underline">🤖 CursorAI</a>
                   </div>
                 </>
               ) : (
@@ -163,6 +165,8 @@ function App() {
                     <a href="https://react.dev" className="font-medium text-blue-600 hover:underline">React</a>
                     <span className="text-gray-300">•</span>
                     <a href="https://daisyui.com" className="font-medium text-blue-500 hover:underline">DaisyUI</a>
+                    <span className="text-gray-300">•</span>
+                    <a href="https://cursor.com" className="font-medium text-blue-500 hover:underline">CursorAI</a>
                   </div>
                 </>
               )}
